@@ -34,7 +34,6 @@ const ShopCard = ({ shop }: ShopCardProps) => {
   const [products, setProducts] = useState<Product[]>([]);
   const [averageRating, setAverageRating] = useState(0);
   const [reviewCount, setReviewCount] = useState(0);
-  const [genuinityScore, setGenuinityScore] = useState(0);
 
   useEffect(() => {
     fetchProducts();
@@ -61,9 +60,6 @@ const ShopCard = ({ shop }: ShopCardProps) => {
       const avg = data.reduce((acc, r) => acc + r.rating, 0) / data.length;
       setAverageRating(avg);
       setReviewCount(data.length);
-      
-      const score = Math.min(100, (avg / 5) * 70 + Math.min(30, data.length * 2));
-      setGenuinityScore(Math.round(score));
     }
   };
 
@@ -76,23 +72,20 @@ const ShopCard = ({ shop }: ShopCardProps) => {
             <CardTitle className="text-xl mb-1">{shop.shop_name}</CardTitle>
             <p className="text-sm text-muted-foreground">{shop.owner_name}</p>
           </div>
-          <Badge variant="secondary" className="ml-2">
-            Score: {genuinityScore}
-          </Badge>
+          {shop.distance !== undefined && (
+            <Badge variant="secondary" className="ml-2">
+              <MapPin className="w-3 h-3 mr-1" />
+              {shop.distance < 1 
+                ? `${(shop.distance * 1000).toFixed(0)}m`
+                : `${shop.distance.toFixed(1)}km`}
+            </Badge>
+          )}
         </div>
         
         <div className="flex items-center gap-2 text-sm text-muted-foreground mt-2">
           <MapPin className="w-4 h-4" />
           <span>{shop.address}</span>
         </div>
-        
-        {shop.distance !== undefined && (
-          <p className="text-sm text-primary font-medium mt-1">
-            {shop.distance < 1 
-              ? `${(shop.distance * 1000).toFixed(0)}m away`
-              : `${shop.distance.toFixed(1)}km away`}
-          </p>
-        )}
       </CardHeader>
 
       <CardContent className="space-y-4">
