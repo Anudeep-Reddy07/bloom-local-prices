@@ -30,8 +30,11 @@ const BuyerDashboard = () => {
 
   useEffect(() => {
     getUserLocation();
-    fetchShops();
   }, []);
+
+  useEffect(() => {
+    fetchShops();
+  }, [userLocation]);
 
   const getUserLocation = () => {
     if (navigator.geolocation) {
