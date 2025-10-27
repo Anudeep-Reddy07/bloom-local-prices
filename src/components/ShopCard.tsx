@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { MapPin, Star, ExternalLink } from "lucide-react";
+import { MapPin, Star } from "lucide-react";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import ReviewForm from "./ReviewForm";
 import ReviewList from "./ReviewList";
@@ -67,12 +67,6 @@ const ShopCard = ({ shop }: ShopCardProps) => {
     }
   };
 
-  const openInMaps = () => {
-    window.open(
-      `https://www.google.com/maps/search/?api=1&query=${shop.latitude},${shop.longitude}`,
-      "_blank"
-    );
-  };
 
   return (
     <Card className="shadow-card hover:shadow-elevated transition-shadow">
@@ -102,20 +96,14 @@ const ShopCard = ({ shop }: ShopCardProps) => {
       </CardHeader>
 
       <CardContent className="space-y-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-            <span className="font-medium">
-              {averageRating > 0 ? averageRating.toFixed(1) : "No ratings"}
-            </span>
-            <span className="text-sm text-muted-foreground">
-              ({reviewCount} reviews)
-            </span>
-          </div>
-          <Button variant="outline" size="sm" onClick={openInMaps}>
-            <ExternalLink className="w-3 h-3 mr-1" />
-            Open in Maps
-          </Button>
+        <div className="flex items-center gap-2">
+          <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+          <span className="font-medium">
+            {averageRating > 0 ? averageRating.toFixed(1) : "No ratings"}
+          </span>
+          <span className="text-sm text-muted-foreground">
+            ({reviewCount} reviews)
+          </span>
         </div>
 
         {products.length > 0 && (

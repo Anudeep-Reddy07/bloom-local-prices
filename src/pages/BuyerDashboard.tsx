@@ -70,13 +70,18 @@ const BuyerDashboard = () => {
   const fetchShops = async () => {
     try {
       setLoading(true);
-      const { data, error } = await supabase
+      const { data: shopsData, error: shopsError } = await supabase
         .from("shops")
         .select("*");
 
-      if (error) throw error;
+      if (shopsError) throw shopsError;
 
-      let shopsWithDistance = data || [];
+      // Fetch all products for search functionality
+      const { data: productsData } = await supabase
+        .from("products")
+        .select("shop_id, name, category");
+
+      let shopsWithDistance = shopsData || [];
       
       if (userLocation) {
         shopsWithDistance = shopsWithDistance.map((shop) => ({
@@ -91,7 +96,13 @@ const BuyerDashboard = () => {
         shopsWithDistance.sort((a, b) => ((a as any).distance || 0) - ((b as any).distance || 0));
       }
 
-      setShops(shopsWithDistance);
+      // Attach products to shops for search
+      const shopsWithProducts = shopsWithDistance.map((shop) => ({
+        ...shop,
+        products: productsData?.filter((p) => p.shop_id === shop.id) || [],
+      }));
+
+      setShops(shopsWithProducts as any);
     } catch (error: any) {
       toast({
         variant: "destructive",
@@ -105,11 +116,18 @@ const BuyerDashboard = () => {
 
   const filteredShops = shops.filter((shop) => {
     const query = searchQuery.toLowerCase();
-    return (
+    const matchesShop = 
       shop.shop_name.toLowerCase().includes(query) ||
       shop.owner_name.toLowerCase().includes(query) ||
-      shop.address.toLowerCase().includes(query)
+      shop.address.toLowerCase().includes(query);
+    
+    // Also search in products
+    const matchesProduct = (shop as any).products?.some((product: any) =>
+      product.name.toLowerCase().includes(query) ||
+      product.category.toLowerCase().includes(query)
     );
+    
+    return matchesShop || matchesProduct;
   });
 
   return (
