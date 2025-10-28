@@ -44,8 +44,7 @@ const ShopCard = ({ shop }: ShopCardProps) => {
     const { data } = await supabase
       .from("products")
       .select("*")
-      .eq("shop_id", shop.id)
-      .limit(3);
+      .eq("shop_id", shop.id);
     
     if (data) setProducts(data);
   };
